@@ -1,3 +1,5 @@
+# to be edited
+
 import pygame
 from math import *
 from sys import exit
