@@ -1,45 +1,40 @@
-from copy import *
 from collections import deque
 
-ar = [ 0,0,1,-1 ]
-ac = [ 1,-1,0,0 ]
-def valid(i, j):
-    return i >= 0 and i <= 2 and j >= 0 and j <= 2
+def generate_moves(state):
+    # Generate possible moves (up, down, left, right)
+    moves = []
+    i = state.index(0)
+    if i % 3 > 0: moves.append(('left', i, i-1))
+    if i % 3 < 2: moves.append(('right', i, i+1))
+    if i // 3 > 0: moves.append(('up', i, i-3))
+    if i // 3 < 2: moves.append(('down', i, i+3))
+    return moves
 
-def tpl(lst_of_lsts):
-    return tuple(tuple(lst) for lst in lst_of_lsts)
+def apply_move(state, move):
+    # Apply a move to the state
+    state = list(state)
+    state[move[1]], state[move[2]] = state[move[2]], state[move[1]]
+    return tuple(state)
 
-def bfs(start, x, y, end):
-    parent = {}
-
+def bfs(initial_state, goal):
     visited = set()
-    visited.add(str(start))
-    
-    qu = deque([([], start, x, y)])
-    
-    while qu:
-        front = qu.popleft()
-        cur_parent = front[0]
-        cur_state = front[1]
-        cur_x = front[2]
-        cur_y = front[3]
+    queue = deque([(initial_state, [])])
 
-        parent[tpl(cur_state)] = tpl(cur_parent)
-        if cur_state == end: break
-        
-        New_state = deepcopy(cur_state) #remember copy
-        for k in range(4):
-            ii = cur_x + ar[k]
-            jj = cur_y + ac[k]
-            if valid(ii, jj):
-                New_state[cur_x][cur_y], New_state[ii][jj] = New_state[ii][jj], New_state[cur_x][cur_y]
-                
-                if str(New_state) not in visited:
-                    visited.add(str(New_state))
-                    qu.append((cur_state, deepcopy(New_state), ii, jj))
-                    
-                New_state[cur_x][cur_y], New_state[ii][jj] = New_state[ii][jj], New_state[cur_x][cur_y]
-    return parent            
+    while queue:
+        state, path = queue.popleft()
+
+        if state == goal:
+            return path + [state]
+
+        visited.add(state)
+        for move in generate_moves(state):
+            next_state = apply_move(state, move)
+            if next_state not in visited:
+                queue.append((next_state, path + [state]))
+
+    return None
+
+#print(bfs((5,6,7,4,0,8,3,2,1), (1,3,4,8,6,2,7,0,5)))       
 """
 5 6 7
 4 0 8

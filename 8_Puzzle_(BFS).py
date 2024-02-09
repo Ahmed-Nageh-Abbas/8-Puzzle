@@ -34,17 +34,12 @@ cell_font = pygame.font.Font('fonts/SpaceStory.otf', 100)
 cell_font.set_bold(0)
 
 # set initial states
-start, end = [[5,6,7],[4,0,8],[3,2,1]], [[1,3,4],[8,6,2],[7,0,5]]
-
-parent = BFS.bfs(start, 1, 1, end)
-#parent = {BFS.tpl(end) : ()}
+start, end = ((5,6,7,4,0,8,3,2,1), (1,3,4,8,6,2,7,0,5))
 
 states = []
-end = BFS.tpl(end)
-while end:
-    states.append(end)
-    end = parent[end]
-states = states[::-1]
+path = BFS.bfs(start, end)
+for lst in path:
+    states.append([lst[i:i + 3] for i in range(0, len(lst), 3)])
 print("number of states:", len(states))
 p = 0
 
